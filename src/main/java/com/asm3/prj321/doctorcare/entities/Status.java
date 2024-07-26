@@ -3,12 +3,16 @@ package com.asm3.prj321.doctorcare.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -27,10 +31,22 @@ public class Status {
 	@Column(name="deletedAt")
 	private LocalDateTime deletedAt;
 	@OneToMany(mappedBy = "status")
+	private List<Appointment> appointments;
+	@OneToMany(mappedBy = "status",
+				fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Patient> patients;
 	
 	public List<Patient> getPatients() {
 		return patients;
+	}
+
+	public List<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public void setAppointments(List<Appointment> appointments) {
+		this.appointments = appointments;
 	}
 
 	public void setPatients(List<Patient> patients) {

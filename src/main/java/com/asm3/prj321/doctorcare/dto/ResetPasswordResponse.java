@@ -1,11 +1,11 @@
 package com.asm3.prj321.doctorcare.dto;
 
-public class ResetPasswordDTO {
+public class ResetPasswordResponse {
 	private String password;
 	private String confirmPassword;
 	private String email;
 	
-	public ResetPasswordDTO(String password, String confirmPassword, String email) {
+	public ResetPasswordResponse(String password, String confirmPassword, String email) {
 		super();
 		this.password = password;
 		this.confirmPassword = confirmPassword;
@@ -36,7 +36,7 @@ public class ResetPasswordDTO {
 		this.email = email;
 	}
 
-	public ResetPasswordDTO() {
+	public ResetPasswordResponse() {
 	}
 
 }

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.asm3.prj321.doctorcare.dto.DoctorCareErrorResponse;
 import com.asm3.prj321.doctorcare.entities.Specialization;
-import com.asm3.prj321.doctorcare.exception.DoctorCareErrorResponse;
 import com.asm3.prj321.doctorcare.exception.DoctorCareNotFoundException;
 import com.asm3.prj321.doctorcare.service.SpecializationService;
 
@@ -30,7 +30,7 @@ public class SpecializationController {
 	@GetMapping("/highlighted")
 	public ResponseEntity<?> getHighlightedSpecializations(@RequestParam(defaultValue = "4") int limit){
 		try {
-		List<Specialization> specializations = specializationService.findHighlightedSpecializations(limit);
+		List<Specialization> specializations = specializationService.getHighlightedSpecializations(limit);
 		return ResponseEntity.ok().body(specializations);}
 		catch (Exception e) {
 			throw new DoctorCareNotFoundException("Error: "+e);

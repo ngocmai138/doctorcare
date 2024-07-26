@@ -12,9 +12,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 
-import com.asm3.prj321.doctorcare.dto.ResetPasswordDTO;
+import com.asm3.prj321.doctorcare.dto.AuthenticationRequest;
+import com.asm3.prj321.doctorcare.dto.AuthenticationResponse;
+import com.asm3.prj321.doctorcare.dto.DoctorCareErrorResponse;
+import com.asm3.prj321.doctorcare.dto.ResetPasswordResponse;
 import com.asm3.prj321.doctorcare.entities.User;
-import com.asm3.prj321.doctorcare.exception.DoctorCareErrorResponse;
 import com.asm3.prj321.doctorcare.exception.DoctorCareNotFoundException;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,8 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.asm3.prj321.doctorcare.jwt.AuthenticationRequest;
-import com.asm3.prj321.doctorcare.jwt.AuthenticationResponse;
 import com.asm3.prj321.doctorcare.jwt.JwtUtil;
 import com.asm3.prj321.doctorcare.service.UserService;
 
@@ -101,7 +101,7 @@ public class AuthenticationController {
 	
 	@Operation(summary = "Reset password")
 	@PutMapping("/resetPassword")
-	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO request){
+	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordResponse request){
 		if(!request.getPassword().equals(request.getConfirmPassword()))
 			throw new DoctorCareNotFoundException("Password do not match");
 		Optional<User> userOptional = userService.findByEmail(request.getEmail());

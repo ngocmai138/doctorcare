@@ -3,6 +3,8 @@ package com.asm3.prj321.doctorcare.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +29,7 @@ public class Role {
 	@Column(name="deletedAt")
 	private LocalDateTime deletedAt;
 	@OneToMany(mappedBy = "role")
+	@JsonIgnore
 	private List<User> user;
 
 	public List<User> getUser() {

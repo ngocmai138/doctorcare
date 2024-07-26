@@ -16,7 +16,7 @@ public class SpecializationServiceImpl implements SpecializationService {
 	@Autowired
 	private SpecializationRepository specializationRepository;
 	@Override
-	public List<Specialization> findHighlightedSpecializations(int limitCount) {
+	public List<Specialization> getHighlightedSpecializations(int limitCount) {
 		return specializationRepository.findHighlightedSpecializations(limitCount);
 	}
 

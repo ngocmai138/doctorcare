@@ -67,6 +67,7 @@ create table `schedules`(
     `doctorId` int(11),
     `date` varchar(255),
     `time` varchar(255),
+    `price` bigint,
     `maxBooking` varchar(255),
     `sumBooking` varchar(255),
     `createdAt` datetime default current_timestamp,
@@ -90,6 +91,7 @@ create table `patients`(
     `doctorId` int(11),
     `statusId` int(11),
     `name` varchar(255),
+    `cancelInfo` varchar(255),
     constraint `fk_patients_statuses` foreign key(`statusId`) references `statuses`(id));
 create table `extrainfos`(
 	`id` int(11) primary key auto_increment,
@@ -141,14 +143,27 @@ create table `comments`(
     `status` tinyint(1),
     `createdAt` datetime default current_timestamp,
     `updatedAt` datetime default current_timestamp on update current_timestamp,
-    `deletedAt` datetime);
+    `deletedAt` datetime,
+    constraint `fk_comments_user_` foreign key(`doctorId`) references `users`(id));
+create table `appointment`(
+	`id` int(11) primary key auto_increment,
+    `scheduleId` int(11),
+    `patientId` int(11),
+    `statusId` int(11),
+    `reasonForCancellation` varchar(255),
+    `createdAt` datetime default current_timestamp,
+    `updatedAt` datetime default current_timestamp on update current_timestamp,
+    `deletedAt` datetime,
+    constraint `fk_appoinment_schedule` foreign key(`scheduleId`) references schedules(id),
+    constraint `fk_appoinment_user` foreign key(`patientId`) references users(id),
+    constraint `fk_appoinment_statuses` foreign key(`statusId`) references statuses(id));
 
 -- Procedure lấy chuyên khoa nổi bật được đặt lịch khám nhiều nhất
 DELIMITER $$
 
 CREATE PROCEDURE proc_getHighlightedSpecializations(IN limitCount INT)
 BEGIN
-    SELECT *
+    SELECT s.*
     FROM specializations s
     JOIN doctor_users du ON s.id = du.specializationId
     JOIN schedules sch ON du.doctorId = sch.doctorId
@@ -159,13 +174,151 @@ END $$
 
 DELIMITER ;
 
--- CALL proc_getHighlightedSpecializations(4);
+ -- CALL proc_getHighlightedSpecializations(4);
+ 
+-- Procedure hiển thị cơ sở y tế nổi bật được đặt lịch khám nhiều nhất
+DELIMITER $$
 
+CREATE PROCEDURE proc_getHighlightedClinics(IN limitCount INT)
+BEGIN
+    SELECT c.*
+    FROM clinics c
+    JOIN doctor_users du ON c.id = du.clinicId
+    JOIN schedules sch ON du.doctorId = sch.doctorId
+    GROUP BY c.id
+    ORDER BY COUNT(sch.id) DESC
+    LIMIT limitCount;
+END $$
+
+DELIMITER ;
+-- call proc_getHighlightedClinics(4);
+
+-- procedure hiển thị thông tin người dùng và lịch sử khám chữa bệnh
+DELIMITER $$
+
+CREATE PROCEDURE proc_getPersonalInfo(IN userId INT)
+BEGIN
+    SELECT 
+        u.id AS userId,
+        u.name AS userName,
+        u.email AS userEmail,
+        u.phone AS userPhone,
+        u.address AS userAddress,
+        u.gender AS userGender,
+        u.description AS userDescription,
+        s.id AS scheduleId,
+        s.date AS appointmentDate,
+        s.time AS appointmentTime,
+        cl.name AS clinicName,
+        sp.name AS specializationName,
+        d.name AS doctorName,
+        st.name AS statusName
+    FROM 
+        users u
+    LEFT JOIN 
+        schedules s ON u.id = s.doctorId
+    LEFT JOIN 
+        doctor_users du ON s.doctorId = du.doctorId
+    LEFT JOIN 
+        clinics cl ON du.clinicId = cl.id
+    LEFT JOIN 
+        specializations sp ON du.specializationId = sp.id
+    LEFT JOIN 
+        users d ON du.doctorId = d.id
+    LEFT JOIN 
+        patients pt ON u.id = pt.id
+    LEFT JOIN 
+        statuses st ON pt.statusId = st.id
+    WHERE 
+        u.id = userId;
+END $$
+
+DELIMITER ;
+-- call proc_getPersonalInfo(2);
+
+-- procedure tìm kiếm phòng khám theo khu vực, danh mục, mức giá, cơ sơ
+delimiter $$
+create procedure proc_general_search(
+	in p_region varchar(255),
+    in p_category varchar(255),
+    in p_price varchar(255),
+    in p_clinicName varchar(255))
+begin
+	select c.*
+    from clinics c
+    join doctor_users du on c.id = du.clinicId
+    join specializations s on du.specializationId = s.id
+    join schedules sc on du.id = sc.doctorId
+    where (p_region is null or c.address like concat('%',p_region,'%'))
+    and (p_category is null or s.name like concat('%',p_category,'%'))
+    and (p_price is null or sc.price = p_price)
+    and (p_clinicName is null or c.name like concat('%',p_clinicName,'%'))
+    group by c.id
+    order by count(sc.id) desc;
+end $$
+delimiter ;
+-- call proc_general_search(null, 'Cardiology', null, null);
+
+-- procedure tìm kiếm theo chuyên khoa
+delimiter $$
+create procedure proc_search_by_specialization(
+    in keyword varchar(255))
+begin
+	select u.*
+    from clinics c
+    join doctor_users du on c.id = du.clinicId
+    join specializations s on du.specializationId = s.id
+    join schedules sc on du.id = sc.doctorId
+    join users u on du.doctorId = u.id
+    where s.name like concat('%',keyword,'%')
+    group by u.id
+    order by count(sc.id) desc;
+end $$
+delimiter ;
+-- call proc_search_by_specialization('Neurology');
+
+-- trigger tự động cập nhật bảng patients, extrainfos và schedules khi đặt lịch khám mới
+DELIMITER $$
+
+CREATE TRIGGER trg_after_appointment_insert
+AFTER INSERT ON appointment
+FOR EACH ROW
+BEGIN
+    DECLARE v_doctorId INT;
+    DECLARE v_patientName VARCHAR(255);
+
+    -- Lấy thông tin doctorId từ bảng schedules
+    SELECT doctorId INTO v_doctorId FROM schedules WHERE id = NEW.scheduleId;
+
+    -- Lấy tên bệnh nhân từ bảng users
+    SELECT name INTO v_patientName FROM users WHERE id = NEW.patientId;
+
+    -- Thêm thông tin khám chữa bệnh vào bảng patients nếu chưa tồn tại
+    IF NOT EXISTS (SELECT 1 FROM patients WHERE doctorId = v_doctorId AND name = v_patientName) THEN
+        INSERT INTO patients (doctorId, statusId, name)
+        VALUES (v_doctorId, NEW.statusId, v_patientName);
+    END IF;
+
+    -- Thêm thông tin chi tiết bệnh nhân vào bảng extrainfos
+    INSERT INTO extrainfos (patientId, moreInfo, createdAt, updatedAt)
+    VALUES (NEW.patientId, NEW.reasonForCancellation, NOW(), NOW());
+
+    -- Cập nhật lịch trình với số lượng đặt lịch mới
+    UPDATE schedules
+    SET sumBooking = sumBooking + 1
+    WHERE id = NEW.scheduleId;
+END $$
+
+DELIMITER ;
+
+
+
+ 
 -- Chèn dữ liệu mẫu vào bảng `roles`
 INSERT INTO `roles` (`name`) VALUES
-('Doctor'),
-('Patient'),
-('Supporter');
+('ROLE_Doctor'),
+('ROLE_Patient'),
+('ROLE_Admin');
 
 -- Chèn dữ liệu mẫu vào bảng `specializations`
 INSERT INTO `specializations` (`name`, `description`, `image`) VALUES
@@ -206,12 +359,12 @@ INSERT INTO `users` (`name`, `email`, `password`, `address`, `phone`, `avatar`, 
 ('Charlie Davis', 'charlie.davis@example.com', '$2a$12$ymhAWx6huPdzpZujLBsV.ekqZyD1SoPu3jqoDKEdFw7dJ2kT6bdxa', '202 Cedar St', '567-890-1234', 'charlie.jpg', 'Male', 'Supporter', 3, 1);
 
 -- Chèn dữ liệu mẫu vào bảng `schedules`
-INSERT INTO `schedules` (`doctorId`, `date`, `time`, `maxBooking`, `sumBooking`) VALUES
-(1, '2024-07-21', '09:00', 10, 0),
-(1, '2024-07-22', '10:00', 10, 1),
-(1, '2024-07-23', '11:00', 10, 2),
-(2, '2024-07-24', '12:00', 10, 3),
-(2, '2024-07-25', '13:00', 10, 4);
+INSERT INTO `schedules` (`doctorId`, `date`, `time`, `maxBooking`, `sumBooking`, `price`) VALUES
+(1, '2024-07-21', '09:00', 10, 0, 250000),
+(1, '2024-07-22', '10:00', 10, 1, 250000),
+(1, '2024-07-23', '11:00', 10, 2, 250000),
+(2, '2024-07-24', '12:00', 10, 3, 250000),
+(2, '2024-07-25', '13:00', 10, 4, 250000);
 
 -- Chèn dữ liệu mẫu vào bảng `doctor_users`
 INSERT INTO `doctor_users` (`doctorId`, `clinicId`, `specializationId`) VALUES
@@ -261,23 +414,6 @@ INSERT INTO `comments` (`doctorId`, `timeBooking`, `dateBooking`, `name`, `phone
 (2, '13:00', '2024-07-24', 'John Doe', '888-888-8888', 'Highly recommend', 1),
 (2, '14:00', '2024-07-25', 'Jane Smith', '999-999-9999', 'Will come back', 1);
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+-- Chèn dữ liệu mẫu vào bảng `appointment`
+INSERT INTO `appointment` (`scheduleId`, `patientId`, `statusId`, `reasonForCancellation`)
+VALUES (1, 3, 1, NULL), (2, 4, 2, 'Patient requested cancellation');

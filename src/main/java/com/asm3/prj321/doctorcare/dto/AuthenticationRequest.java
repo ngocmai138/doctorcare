@@ -1,4 +1,4 @@
-package com.asm3.prj321.doctorcare.jwt;
+package com.asm3.prj321.doctorcare.dto;
 
 public class AuthenticationRequest {
 	private String email;

@@ -1,4 +1,4 @@
-package com.asm3.prj321.doctorcare.exception;
+package com.asm3.prj321.doctorcare.dto;
 
 public class DoctorCareErrorResponse {
 	private int status;

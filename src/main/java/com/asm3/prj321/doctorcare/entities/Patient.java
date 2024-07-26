@@ -2,8 +2,11 @@ package com.asm3.prj321.doctorcare.entities;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,7 +30,9 @@ public class Patient {
 	@ManyToOne
 	@JoinColumn(name="statusId")
 	private Status status;
-	@OneToMany(mappedBy = "patient")
+	@OneToMany(mappedBy = "patient",
+				fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<ExtraInfo> extraInfos;
 	
 	public List<ExtraInfo> getExtraInfos() {

@@ -44,6 +44,8 @@ public class SecurityConfig {
 											"/webjars/**",
 											"/swagger-ui/index.html")
 						.permitAll()
+						.requestMatchers("/doctor/**")
+						.hasRole("Doctor")
 						.anyRequest()
 						.authenticated()
 						)

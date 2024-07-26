@@ -3,12 +3,18 @@ package com.asm3.prj321.doctorcare.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedStoredProcedureQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureParameter;
 import jakarta.persistence.Table;
 
 @Entity
@@ -38,9 +44,13 @@ public class Clinic {
 	private LocalDateTime updatedAt;
 	@Column(name="deletedAt")
 	private LocalDateTime deletedAt;
-	@OneToMany(mappedBy = "clinic")
+	@OneToMany(mappedBy = "clinic",
+				fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<DoctorUser> doctorUsers;
-	@OneToMany(mappedBy = "forClinic")
+	@OneToMany(mappedBy = "forClinic",
+				fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Post> posts;
 	
 	public List<Post> getPosts() {

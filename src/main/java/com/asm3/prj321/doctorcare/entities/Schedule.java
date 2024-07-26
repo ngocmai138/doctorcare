@@ -1,6 +1,7 @@
 package com.asm3.prj321.doctorcare.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +10,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -26,6 +29,8 @@ public class Schedule {
 	private String maxBooking;
 	@Column(name="sumBooking")
 	private String sumBooking;
+	@Column(name="price")
+	private Long price;
 	@Column(name="createdAt")
 	private LocalDateTime createdAt;
 	@Column(name="updatedAt")
@@ -35,6 +40,8 @@ public class Schedule {
 	@ManyToOne
 	@JoinColumn(name="doctorId")
 	private User doctor;
+	@OneToMany(mappedBy = "schedule")
+	private List<Appointment> appointments;
 
 	@Override
 	public String toString() {
@@ -54,6 +61,22 @@ public class Schedule {
 		this.updatedAt = updatedAt;
 		this.deletedAt = deletedAt;
 		this.doctor = doctor;
+	}
+
+	public List<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public void setAppointments(List<Appointment> appointments) {
+		this.appointments = appointments;
+	}
+
+	public Long getPrice() {
+		return price;
+	}
+
+	public void setPrice(Long price) {
+		this.price = price;
 	}
 
 	public int getId() {

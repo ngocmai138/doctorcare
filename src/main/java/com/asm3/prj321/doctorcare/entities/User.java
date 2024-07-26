@@ -7,14 +7,18 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
@@ -51,23 +55,36 @@ public class User {
 	private Boolean isActive;
 	@ManyToOne
 	@JoinColumn(name="roleId")
+	@JsonIgnore
 	private Role role;
-	@OneToMany(mappedBy = "doctor")
+	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Schedule> schedules;
-	@OneToMany(mappedBy = "doctor")
+	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<DoctorUser> doctorUsers;
-	@OneToMany(mappedBy = "doctor")
+	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Patient> patients;
-	@OneToMany(mappedBy = "forDoctor")
+	@OneToMany(mappedBy = "forDoctor", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Post> postsForDoctor;
-	@OneToMany(mappedBy = "writer")
+	@OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Post> postsByWriter;
-	@OneToMany(mappedBy = "patient")
+	@OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<SupporterLog> supporterLogsForPatient;
-	@OneToMany(mappedBy = "supporter")
+	@OneToMany(mappedBy = "supporter", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<SupporterLog> supporterLogsBySupporter;
-	@OneToMany(mappedBy = "doctor")
+	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Comment> comments;
+	@OneToMany(mappedBy = "patient")
+	@JsonIgnore
+	private List<Appointment> appointments;
+	
 	@jakarta.persistence.Transient
 	private String confirmPassword;
 	
@@ -94,6 +111,14 @@ public class User {
 	
 	public List<Comment> getComments() {
 		return comments;
+	}
+
+	public List<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public void setAppointments(List<Appointment> appointments) {
+		this.appointments = appointments;
 	}
 
 	public void setComments(List<Comment> comments) {

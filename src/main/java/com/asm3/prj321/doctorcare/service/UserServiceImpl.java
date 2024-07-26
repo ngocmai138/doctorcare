@@ -8,11 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.asm3.prj321.doctorcare.entities.User;
 import com.asm3.prj321.doctorcare.repository.UserRepository;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService{
 	@Autowired
 	private UserRepository userRepository;
@@ -38,6 +40,22 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Optional<User> findByEmail(String email) {
 		return userRepository.findByEmail(email);
+	}
+	@Override
+	public List<Object[]> getPersonalInfo(int userId) {
+		return userRepository.getPersonalInfo(userId);
+	}
+	@Override
+	public List<User> searchBySpecialization(String specializationName) {
+		return userRepository.searchBySpecialization(specializationName);
+	}
+	@Override
+	public boolean existsById(int userId) {
+		return userRepository.existsById(userId);
+	}
+	@Override
+	public List<User> findAllPatients() {
+		return userRepository.findAllPatients();
 	}
 	
 

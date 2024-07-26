@@ -1,9 +1,11 @@
-package com.asm3.prj321.doctorcare.exception;
+package com.asm3.prj321.doctorcare.globalHandler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import com.asm3.prj321.doctorcare.dto.DoctorCareErrorResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
