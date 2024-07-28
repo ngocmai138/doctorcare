@@ -59,6 +59,10 @@ public class AuthenticationController {
 		 if (!"password".equals(authenticationRequest.getGrantType())) {
 	            return ResponseEntity.badRequest().body("Unsupported grant type: " + authenticationRequest.getGrantType());
 	        }
+		 final UserDetails user = userService.loadUserByUsername(authenticationRequest.getEmail());
+		 User userLogin = userService.findByEmail(authenticationRequest.getEmail()).get();
+		 if(!userLogin.getIsActive())
+			 return ResponseEntity.badRequest().body("User is not active");
 		// Xác thực thông tin đăng nhập của user
 		try {
 			UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword());
@@ -68,7 +72,6 @@ public class AuthenticationController {
 			e.printStackTrace();
 			throw new RuntimeException("Incorrect email or password ",e);
 		}
-		final UserDetails user = userService.loadUserByUsername(authenticationRequest.getEmail());
 		// Tạo mã JWT
 		Map<String, Object> claims = new HashMap<String, Object>();
 		claims.put("roles", user.getAuthorities());
@@ -86,7 +89,7 @@ public class AuthenticationController {
 			return ResponseEntity.badRequest().body("Password do not match");
 		if(userService.findByEmail(user.getEmail()).isPresent()) 
 			throw new DoctorCareNotFoundException("Email existed!");
-		userService.saveUser(user);
+		userService.save(user);
 		return ResponseEntity.ok("Registry successful");
 	}
 	
@@ -109,7 +112,7 @@ public class AuthenticationController {
 			throw new DoctorCareNotFoundException("Email doesn't exist");
 		User user = userOptional.get();
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		userService.saveUser(user);
+		userService.save(user);
 		return ResponseEntity.ok("Reset password successful");
 	}
 	

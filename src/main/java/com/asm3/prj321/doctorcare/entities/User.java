@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -18,13 +19,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name="users")
-public class User {
+public class User implements UserDetails{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
@@ -45,6 +45,8 @@ public class User {
 	private String gender;
 	@Column(name="description")
 	private String description;
+	@Column(name = "reasonForBlock")
+	private String reasonForBlock;	
 	@Column(name="createdAt")
 	private LocalDateTime createdAt;
 	@Column(name="updatedAt")
@@ -55,7 +57,6 @@ public class User {
 	private Boolean isActive;
 	@ManyToOne
 	@JoinColumn(name="roleId")
-	@JsonIgnore
 	private Role role;
 	@OneToMany(mappedBy = "doctor", fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -97,6 +98,14 @@ public class User {
 		this.setRole(role);
 	}
 	
+	public String getReasonForBlock() {
+		return reasonForBlock;
+	}
+
+	public void setReasonForBlock(String reasonForBlock) {
+		this.reasonForBlock = reasonForBlock;
+	}
+
 	public String getConfirmPassword() {
 		return confirmPassword;
 	}
@@ -105,6 +114,8 @@ public class User {
 		this.confirmPassword = confirmPassword;
 	}
 
+	@Override
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities(){
 		return List.of(new SimpleGrantedAuthority(role.getName()));
 	}
@@ -321,6 +332,11 @@ public class User {
 	}
 
 	public User() {
+	}
+
+	@Override
+	public String getUsername() {
+		return this.email;
 	}
 
 }

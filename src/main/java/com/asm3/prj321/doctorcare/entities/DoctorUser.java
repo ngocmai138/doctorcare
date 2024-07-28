@@ -18,6 +18,12 @@ public class DoctorUser {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	private int id;
+	@Column(name="summary")
+	private String summary;
+	@Column(name="trainingProcess")
+	private String trainingProcess;
+	@Column(name="achievement")
+	private String achievement;
 	@Column(name="createdAt")
 	private LocalDateTime createdAt;
 	@Column(name="updatedAt")
@@ -49,6 +55,30 @@ public class DoctorUser {
 		this.doctor = doctor;
 		this.clinic = clinic;
 		this.specialization = specialization;
+	}
+
+	public String getSummary() {
+		return summary;
+	}
+
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+
+	public String getTrainingProcess() {
+		return trainingProcess;
+	}
+
+	public void setTrainingProcess(String trainingProcess) {
+		this.trainingProcess = trainingProcess;
+	}
+
+	public String getAchievement() {
+		return achievement;
+	}
+
+	public void setAchievement(String achievement) {
+		this.achievement = achievement;
 	}
 
 	public int getId() {

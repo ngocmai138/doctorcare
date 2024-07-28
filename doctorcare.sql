@@ -58,6 +58,7 @@ create table `users`(
     `description` text,
     `roleId` int(11),
     `isActive` tinyInt(1),
+    `reasonForBlock` varchar(255),
     `createdAt` datetime default current_timestamp,
     `updatedAt` datetime default current_timestamp on update current_timestamp,
     `deletedAt` datetime,
@@ -79,6 +80,9 @@ create table `doctor_users`(
 	`id` int(11) auto_increment primary key,
     `doctorId` int(11),
     `clinicId` int(11),
+    `summary` text,
+    `trainingProcess` text,
+    `achievement` text,
     `specializationId` int(11),
     `createdAt` datetime default current_timestamp,
     `updatedAt` datetime default current_timestamp on update current_timestamp,
@@ -149,7 +153,7 @@ create table `appointment`(
 	`id` int(11) primary key auto_increment,
     `scheduleId` int(11),
     `patientId` int(11),
-    `statusId` int(11),
+    `statusId` int(11) default 1,
     `reasonForCancellation` varchar(255),
     `createdAt` datetime default current_timestamp,
     `updatedAt` datetime default current_timestamp on update current_timestamp,
@@ -354,25 +358,25 @@ INSERT INTO `places` (`name`) VALUES
 INSERT INTO `users` (`name`, `email`, `password`, `address`, `phone`, `avatar`, `gender`, `description`, `roleId`, `isActive`) VALUES
 ('John Doe', 'john.doe@example.com', '$2a$12$ymhAWx6huPdzpZujLBsV.ekqZyD1SoPu3jqoDKEdFw7dJ2kT6bdxa', '123 Main St', '123-456-7890', 'john.jpg', 'Male', 'Experienced doctor', 1, 1),
 ('Alice White', 'alice.white@example.com', '$2a$12$ymhAWx6huPdzpZujLBsV.ekqZyD1SoPu3jqoDKEdFw7dJ2kT6bdxa', '456 Birch St', '234-567-8901', 'alice.jpg', 'Female', 'Pediatric doctor', 1, 1),
-('Jane Smith', 'jane.smith@example.com', '$2a$12$ymhAWx6huPdzpZujLBsV.ekqZyD1SoPu3jqoDKEdFw7dJ2kT6bdxa', '456 Elm St', '987-654-3210', 'jane.jpg', 'Female', 'Patient', 2, 1),
+('Jane Smith', 'phuthuynho1381@gmail.com', '$2a$12$ymhAWx6huPdzpZujLBsV.ekqZyD1SoPu3jqoDKEdFw7dJ2kT6bdxa', '456 Elm St', '987-654-3210', 'jane.jpg', 'Female', 'Patient', 2, 1),
 ('Bob Brown', 'bob.brown@example.com', '$2a$12$ymhAWx6huPdzpZujLBsV.ekqZyD1SoPu3jqoDKEdFw7dJ2kT6bdxa', '101 Pine St', '456-789-0123', 'bob.jpg', 'Male', 'Supporter', 3, 1),
 ('Charlie Davis', 'charlie.davis@example.com', '$2a$12$ymhAWx6huPdzpZujLBsV.ekqZyD1SoPu3jqoDKEdFw7dJ2kT6bdxa', '202 Cedar St', '567-890-1234', 'charlie.jpg', 'Male', 'Supporter', 3, 1);
 
 -- Chèn dữ liệu mẫu vào bảng `schedules`
 INSERT INTO `schedules` (`doctorId`, `date`, `time`, `maxBooking`, `sumBooking`, `price`) VALUES
 (1, '2024-07-21', '09:00', 10, 0, 250000),
-(1, '2024-07-22', '10:00', 10, 1, 250000),
-(1, '2024-07-23', '11:00', 10, 2, 250000),
-(2, '2024-07-24', '12:00', 10, 3, 250000),
-(2, '2024-07-25', '13:00', 10, 4, 250000);
+(1, '2024-07-22', '10:00', 10, 0, 250000),
+(1, '2024-07-23', '11:00', 10, 0, 250000),
+(2, '2024-07-24', '12:00', 10, 0, 250000),
+(2, '2024-07-25', '13:00', 10, 0, 250000);
 
 -- Chèn dữ liệu mẫu vào bảng `doctor_users`
-INSERT INTO `doctor_users` (`doctorId`, `clinicId`, `specializationId`) VALUES
-(1, 1, 1),
-(1, 2, 2),
-(2, 3, 3),
-(2, 4, 4),
-(2, 5, 5);
+INSERT INTO `doctor_users` (`doctorId`, `clinicId`, `specializationId`, `trainingProcess`, `achievement`, `summary`) VALUES
+(1, 1, 1, 'Medical School at University A, Residency at Hospital B', 'Best Doctor Award 2020, Published 5 research papers', 'Experienced cardiologist with a focus on innovative treatments'),
+(1, 2, 2, 'Medical School at University C, Residency at Hospital D', 'Top 10 Doctors in City X, Authored 2 books', 'Neurologist specializing in brain and nervous system disorders'),
+(2, 3, 3, 'Medical School at University E, Residency at Hospital F', 'Excellence in Pediatrics Award 2019, 3 patents', 'Pediatrician with a passion for child healthcare and research'),
+(2, 4, 4, 'Medical School at University G, Residency at Hospital H', 'Orthopedic Specialist of the Year 2018, Keynote Speaker at 3 conferences', 'Orthopedic surgeon with expertise in bone and joint surgery'),
+(2, 5, 5, 'Medical School at University I, Residency at Hospital J', 'Dermatology Innovation Award 2017, 4 clinical trials', 'Dermatologist with a focus on skin cancer and cosmetic procedures');
 
 -- Chèn dữ liệu mẫu vào bảng `patients`
 INSERT INTO `patients` (`doctorId`, `statusId`, `name`) VALUES

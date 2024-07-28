@@ -3,6 +3,8 @@ package com.asm3.prj321.doctorcare.entities;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,6 +43,7 @@ public class Schedule {
 	@JoinColumn(name="doctorId")
 	private User doctor;
 	@OneToMany(mappedBy = "schedule")
+	@JsonIgnore
 	private List<Appointment> appointments;
 
 	@Override

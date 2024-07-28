@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -31,11 +32,17 @@ public class Status {
 	@Column(name="deletedAt")
 	private LocalDateTime deletedAt;
 	@OneToMany(mappedBy = "status")
+	@JsonIgnore
 	private List<Appointment> appointments;
 	@OneToMany(mappedBy = "status",
 				fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<Patient> patients;
+	
+	@PrePersist
+	public void onCreate() {
+		this.createdAt = LocalDateTime.now();
+	}
 	
 	public List<Patient> getPatients() {
 		return patients;

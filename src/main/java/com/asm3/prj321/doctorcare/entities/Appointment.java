@@ -2,6 +2,10 @@ package com.asm3.prj321.doctorcare.entities;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.asm3.prj321.doctorcare.service.StatusService;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,8 +44,6 @@ public class Appointment {
 	
 	@PrePersist
 	public void onCreate() {
-		Status status = new Status();
-		status.setId(1);
 		this.createdAt = LocalDateTime.now();
 	}
 

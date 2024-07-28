@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService{
 				user.getEmail(), user.getPassword(), user.getAuthorities());
 	}
 	@Override
-	public User saveUser(User user) {
+	public User save(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
@@ -56,6 +56,10 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<User> findAllPatients() {
 		return userRepository.findAllPatients();
+	}
+	@Override
+	public Optional<User> findById(int userId) {
+		return userRepository.findById(userId);
 	}
 	
 
