@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.expression.spel.ast.OpAnd;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +12,6 @@ import org.springframework.security.core.AuthenticationException;
 
 import com.asm3.prj321.doctorcare.dto.AuthenticationRequest;
 import com.asm3.prj321.doctorcare.dto.AuthenticationResponse;
-import com.asm3.prj321.doctorcare.dto.DoctorCareErrorResponse;
 import com.asm3.prj321.doctorcare.dto.ResetPasswordResponse;
 import com.asm3.prj321.doctorcare.entities.User;
 import com.asm3.prj321.doctorcare.exception.DoctorCareNotFoundException;
@@ -22,13 +19,10 @@ import com.asm3.prj321.doctorcare.exception.DoctorCareNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asm3.prj321.doctorcare.jwt.JwtUtil;
@@ -53,7 +47,7 @@ public class AuthenticationController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
-	@Operation(summary = "Create authentication token")
+	@Operation(summary = "5.1.1. Create authentication token")
 	@PostMapping("/token")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
 		 if (!"password".equals(authenticationRequest.getGrantType())) {
@@ -63,7 +57,6 @@ public class AuthenticationController {
 		 User userLogin = userService.findByEmail(authenticationRequest.getEmail()).get();
 		 if(!userLogin.getIsActive())
 			 return ResponseEntity.badRequest().body("User is not active");
-		// Xác thực thông tin đăng nhập của user
 		try {
 			UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 			authenticationManager.authenticate(upToken);
@@ -72,7 +65,6 @@ public class AuthenticationController {
 			e.printStackTrace();
 			throw new RuntimeException("Incorrect email or password ",e);
 		}
-		// Tạo mã JWT
 		Map<String, Object> claims = new HashMap<String, Object>();
 		claims.put("roles", user.getAuthorities());
 		final String jwt = jwtUtil.createToken(claims,user.getUsername());
@@ -80,7 +72,7 @@ public class AuthenticationController {
 		return ResponseEntity.ok(new AuthenticationResponse(jwt));
 	}
 	
-	@Operation(summary = "Register new user")
+	@Operation(summary = "5.1.2. Register new user")
 	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()) 
@@ -93,7 +85,7 @@ public class AuthenticationController {
 		return ResponseEntity.ok("Registry successful");
 	}
 	
-	@Operation(summary = "Verify Email")
+	@Operation(summary = "5.1.3. Verify Email")
 	@PostMapping("/verifyEmail")
 	public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> request){
 		String email = request.get("email");
@@ -102,7 +94,7 @@ public class AuthenticationController {
 		return ResponseEntity.ok("Verify Email successful");
 	}
 	
-	@Operation(summary = "Reset password")
+	@Operation(summary = "5.1.3 Reset password")
 	@PutMapping("/resetPassword")
 	public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordResponse request){
 		if(!request.getPassword().equals(request.getConfirmPassword()))

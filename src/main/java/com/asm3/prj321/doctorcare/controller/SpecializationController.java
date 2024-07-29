@@ -26,7 +26,7 @@ public class SpecializationController {
 	@Autowired
 	private SpecializationService specializationService;
 	
-	@Operation(summary = "Get highlighted specializations")
+	@Operation(summary = "5.1.4. Get highlighted specializations")
 	@GetMapping("/highlighted")
 	public ResponseEntity<?> getHighlightedSpecializations(@RequestParam(defaultValue = "4") int limit){
 		try {

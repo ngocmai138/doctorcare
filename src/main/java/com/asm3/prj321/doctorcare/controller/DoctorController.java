@@ -40,7 +40,7 @@ public class DoctorController {
 	@Autowired
 	private ApiResponseHandler apiResponseHandler;
 
-	@Operation(summary = "List all patients")
+	@Operation(summary = "5.2.2. List all patients")
 	@GetMapping("/patients")
 	public ResponseEntity<ApiResponse<List<User>>> listPatients() {
 		try {
@@ -51,7 +51,7 @@ public class DoctorController {
 		}
 	}
 
-	@Operation(summary = "Cancel or confirm appointment")
+	@Operation(summary = "5.2.3. Cancel or confirm appointment")
 	@PutMapping("/confirmAppointment")
 	public ResponseEntity<ApiResponse<Appointment>> cancelAppointment(@RequestBody AppointmentStatusRequest request) {
 		try {

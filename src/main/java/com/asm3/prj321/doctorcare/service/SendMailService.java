@@ -29,6 +29,7 @@ public class SendMailService {
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 			@Override
 			public void prepare(MimeMessage mimeMessage) throws Exception {
+				System.out.println("user's email: "+user.getEmail());
 				MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true);
 				message.setTo(user.getEmail());
 				message.setSubject("Medical information");
@@ -46,7 +47,4 @@ public class SendMailService {
 			throw new DoctorCareNotFoundException(e);
 		}
 	}
-	
-	
-
 }

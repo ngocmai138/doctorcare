@@ -1,9 +1,12 @@
 package com.asm3.prj321.doctorcare.controller;
 
 import java.io.File;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.asm3.prj321.doctorcare.dto.AddDoctorRequest;
 import com.asm3.prj321.doctorcare.dto.ApiResponse;
 import com.asm3.prj321.doctorcare.dto.BlockUserRequest;
-import com.asm3.prj321.doctorcare.dto.SendMailRequest;
+import com.asm3.prj321.doctorcare.entities.Appointment;
 import com.asm3.prj321.doctorcare.entities.DoctorUser;
 import com.asm3.prj321.doctorcare.entities.User;
 import com.asm3.prj321.doctorcare.exception.DoctorCareNotFoundException;
@@ -41,7 +44,7 @@ public class AdminController {
 	@Autowired
 	private ApiResponseHandler apiResponseHandler;
 
-	@Operation(summary = "Block or unblock User/Doctor")
+	@Operation(summary = "5.3.2. /5.3.5. Block or unblock User/Doctor")
 	@PutMapping("/blockuser")
 	public ResponseEntity<ApiResponse<User>> changeStatusUser(@RequestBody BlockUserRequest request) {
 		try {
@@ -54,7 +57,7 @@ public class AdminController {
 		}
 	}
 
-	@Operation(summary = "Add new doctor with extra informations")
+	@Operation(summary = "5.3.4. Add new doctor with extra informations")
 	@PostMapping("/addDoctor")
 	public ResponseEntity<ApiResponse<User>> saveDoctor(@RequestBody AddDoctorRequest request) {
 		try {
@@ -69,7 +72,7 @@ public class AdminController {
 		}
 	}
 
-	@Operation(summary = "Send mail with medical report to patient")
+	@Operation(summary = "6.1. Send mail with medical report to patient")
 	@PostMapping("/sendMail")
 	public ResponseEntity<ApiResponse<String>> sendMailToPatient(
 								@RequestParam("patientId") int patientId,
@@ -84,6 +87,18 @@ public class AdminController {
 			
 			return apiResponseHandler.createSuccessResponse("Mail sent successfully!");
 		} catch (Exception e) {
+			throw new DoctorCareNotFoundException(e);
+		}
+	}
+	
+	@Operation(summary = "6.2./ 6.3. Detail appointments of a patient/doctor")
+	@GetMapping("/appointments/{userId}")
+	public ResponseEntity<ApiResponse<List<Appointment>>> getPatientAppointments(@PathVariable("userId") int userId){
+		try {
+			User user = userService.findById(userId).get();
+			List<Appointment> appointments = user.getAppointments();
+			return apiResponseHandler.createSuccessResponse(appointments);
+		}catch (Exception e) {
 			throw new DoctorCareNotFoundException(e);
 		}
 	}

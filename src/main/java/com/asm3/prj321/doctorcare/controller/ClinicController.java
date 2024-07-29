@@ -29,7 +29,7 @@ public class ClinicController {
 	@Autowired
 	private ApiResponseHandler apiResponseHandler;
 	
-	@Operation(summary = "Get highlighted Clinics")
+	@Operation(summary = "5.1.5. Get highlighted Clinics")
 	@GetMapping("/highlighted")
 	public ResponseEntity<ApiResponse<List<Clinic>>> getHighLightedClinics(@RequestParam(defaultValue = "4") int limit){
 		try {
@@ -40,7 +40,7 @@ public class ClinicController {
 		}
 	}
 	
-	@Operation(summary = "Search clinic")
+	@Operation(summary = "5.1.7. Search clinic by keyworks of region, specialization, priceRange, clinic's name")
 	@GetMapping("/search")
 	public ResponseEntity<ApiResponse<List<Clinic>>> searchClinic(
 									@RequestParam(value="region", required = false) String region,

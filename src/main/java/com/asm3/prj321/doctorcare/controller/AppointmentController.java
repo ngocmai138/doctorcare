@@ -40,7 +40,7 @@ public class AppointmentController {
 	@Autowired
 	StatusService statusService;
 
-	@Operation(summary = "Book appointment")
+	@Operation(summary = "5.1.9. Book appointment")
 	@PostMapping("/booking")
 	public ResponseEntity<ApiResponse<Appointment>> bookAppointment(@RequestBody AppointmentRequest request) {
 		try {

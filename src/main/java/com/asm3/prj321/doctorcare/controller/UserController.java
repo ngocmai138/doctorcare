@@ -29,7 +29,7 @@ public class UserController {
 	@Autowired
 	private ApiResponseHandler apiResponseHandler;
 
-	@Operation(summary = "Get personal information with appointments")
+	@Operation(summary = "5.1.6./ 5.2.1./ 5.3.1. Get personal information with appointments")
 	@GetMapping("/personalInfo/{userId}")
 	public ResponseEntity<ApiResponse<List<Object[]>>> getPersonalInfo(@PathVariable(value = "userId") int userId) {
 		try {
@@ -40,7 +40,7 @@ public class UserController {
 		}
 	}
 
-	@Operation(summary = "Search doctors by specialization's name")
+	@Operation(summary = "5.1.8. Search doctors by specialization's name")
 	@GetMapping("/search")
 	public ResponseEntity<ApiResponse<List<User>>> searchUserBySpecialization(@RequestParam("keyword") String keyword) {
 		try {

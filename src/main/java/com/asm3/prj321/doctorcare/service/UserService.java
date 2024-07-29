@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import com.asm3.prj321.doctorcare.entities.Appointment;
 import com.asm3.prj321.doctorcare.entities.User;
 
 public interface UserService extends UserDetailsService{

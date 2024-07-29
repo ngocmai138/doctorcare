@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.asm3.prj321.doctorcare.entities.Appointment;
 import com.asm3.prj321.doctorcare.entities.User;
 import com.asm3.prj321.doctorcare.repository.UserRepository;
 
