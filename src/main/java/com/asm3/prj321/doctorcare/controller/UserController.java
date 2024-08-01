@@ -46,7 +46,7 @@ public class UserController {
 		try {
 			System.out.println("Keyword: "+keyword);
 			List<User> doctors = userService.searchBySpecialization(keyword);
-			if(doctors.size()==0) return apiResponseHandler.createErrorResponse("0 Result");
+//			if(doctors.size()==0) return apiResponseHandler.createErrorResponse("0 Result");
 			return apiResponseHandler.createSuccessResponse("Doctors retrieved successfully", doctors);
 		} catch (Exception e) {
 			throw new DoctorCareNotFoundException(e);
